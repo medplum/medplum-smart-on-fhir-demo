@@ -4,7 +4,6 @@ import { useMedplumContext } from '@medplum/react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { FHIR_SCOPE, MEDPLUM_CLIENT_ID, SMART_HEALTH_IT_CLIENT_ID } from '../config';
-import { Console } from 'console';
 
 interface SmartConfiguration {
   authorization_endpoint: string;
@@ -57,14 +56,12 @@ async function initiateEhrLaunch(params: URLSearchParams): Promise<never> {
   }
 
   // Store the issuer for later use
-  console.log(`setting sessionStorage.smart_iss to ${iss}`);
   sessionStorage.setItem('smart_iss', iss);
 
   const config = await fetchSmartConfiguration(iss);
 
   // Generate and store state for verification
-  const state = crypto.randomUUID();
-  console.log(`setting sessionStorage.smart_state to ${state}`);
+  const state = launch;
   sessionStorage.setItem('smart_state', state);
 
   // Get the appropriate client ID
@@ -78,12 +75,10 @@ async function initiateEhrLaunch(params: URLSearchParams): Promise<never> {
     redirect_uri: window.location.origin + '/launch',
     state,
     aud: "https://api.medplum.com/oauth2/authorize",
-    launch: launch as string,
   });
 
   const url = new URL(config.authorization_endpoint);
   url.search = authParams.toString();
-  console.log(`Redirecting to: ${url.toString()}`);
   window.location.href = url.toString();
   return new Promise(() => {}); // This promise never resolves due to redirect
 }
@@ -103,7 +98,7 @@ function validateAuthResponse(params: URLSearchParams): void {
 
   if (missing.length > 0) {
     throw new Error(`Missing required parameters in authorization response: ${missing.join(', ')}`);
-    }
+  }
 
   if (state !== storedState) {
     throw new Error('State parameter mismatch - possible security issue');
@@ -125,12 +120,14 @@ async function exchangeCodeForToken(
       grant_type: 'authorization_code',
       code: code as string,
       redirect_uri: window.location.origin + '/launch',
-      client_id: clientId,
+      client_id: "",
     }).toString(),
   });
 
   if (!tokenResponse.ok) {
-    throw new Error('Failed to get access token');
+    console.log(await tokenResponse.text());
+    return null;
+    //throw new Error('Failed to get access token');
   }
 
   return tokenResponse.json();
@@ -157,20 +154,9 @@ export function LaunchPage(): JSX.Element {
     const handleSmartLaunch = async (): Promise<void> => {
       try {
         const params = new URLSearchParams(window.location.search);
-
-        console.log(`launch page hit with parameters: ${params.toString()}`);
-
         const launch = params.get('launch');
 
-        console.log("=================================");
-        console.log(launch);
-        console.log(params.get('code'));
-        console.log(params.get('state'));
-        console.log(params.toString());
-        console.log("=================================");
-
         if (launch) {
-          console.log("+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=");
           await initiateEhrLaunch(params);
           return;
         }
@@ -185,7 +171,13 @@ export function LaunchPage(): JSX.Element {
 
         const config = await fetchSmartConfiguration(iss);
         const clientId = getClientId(params, iss);
+
         const tokenData = await exchangeCodeForToken(params, config, clientId);
+
+        if (!tokenData) {
+          console.log("closing");
+          return;
+        }
 
         // Clean up session storage
         sessionStorage.removeItem('smart_state');
@@ -194,7 +186,8 @@ export function LaunchPage(): JSX.Element {
         setupMedplumClient(tokenData, iss, medplumContext);
 
         // Redirect to patient page
-        navigate('/patient')?.catch(console.error);
+        //navigate('/patient')?.catch(console.error);
+        navigate('/patient?patientId=01960d05-428a-711d-9d42-07e3a1bcac89')?.catch(console.error);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Unknown error');
       }

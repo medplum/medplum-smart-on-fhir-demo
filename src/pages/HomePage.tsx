@@ -15,28 +15,12 @@ interface SmartLaunchProps {
 
 function SmartLaunch({ clientId, iss, children }: SmartLaunchProps): JSX.Element {
 
-  console.log(`clientId: ${clientId}, issuer: ${iss}`);
-
-  //const params = new URLSearchParams({
-  //  response_type: 'code',
-  //  client_id: clientId,
-  //  scope: FHIR_SCOPE,
-  //  redirect_uri: window.location.origin + '/launch',
-  //  state: crypto.randomUUID(),
-  //  aud: iss,
-  //});
-
-  //const launch_url = `${iss}?${params.toString()}`;
-
   const params = new URLSearchParams({
     iss: "https://api.medplum.com/fhir/R4/",
     launch: crypto.randomUUID(),
   });
 
   const launch_url = `http://localhost:8001/launch?${params.toString()}`;
-  http://localhost:8001/launch?iss=https%3A%2F%2Fapi.medplum.com%2Ffhir%2FR4%2F&launch=2c9d17f4-257f-4b3b-9859-3011964185ca
-
-  console.log(`Setting button href to: ${launch_url}`);
 
   const handleClick = (): void => {
     window.location.href = launch_url;
@@ -60,9 +44,9 @@ export function HomePage(): JSX.Element {
           <Button>Launch with Medplum</Button>
         </SmartLaunch>
 
-        {/*<SmartLaunch clientId={SMART_HEALTH_IT_CLIENT_ID} iss={SMART_HEALTH_IT_AUTH_URL}>*/}
-        {/*  <Button>Launch with SMART Health IT Sandbox</Button>*/}
-        {/*</SmartLaunch>*/}
+        <SmartLaunch clientId={SMART_HEALTH_IT_CLIENT_ID} iss={SMART_HEALTH_IT_AUTH_URL}>
+          <Button>Launch with SMART Health IT Sandbox</Button>
+        </SmartLaunch>
       </Stack>
     </Container>
   );
