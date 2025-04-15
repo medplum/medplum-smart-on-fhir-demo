@@ -26,7 +26,6 @@ export function PatientPage(): JSX.Element {
           throw new Error('No authentication token or patient ID found');
         }
 
-        console.log(`getting patient data with token: ${medplum.getAccessToken()}`);
         const patient = await medplum.readResource('Patient', patientId);
 
         setPatient(patient);

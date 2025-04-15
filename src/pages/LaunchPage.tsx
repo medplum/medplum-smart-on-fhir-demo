@@ -3,7 +3,7 @@ import { MedplumClient } from '@medplum/core';
 import { useMedplumContext } from '@medplum/react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { FHIR_SCOPE, MEDPLUM_CLIENT_ID, SMART_HEALTH_IT_CLIENT_ID } from '../config';
+import { FHIR_SCOPE, MEDPLUM_CLIENT_ID, MEDPLUM_AUTH_URL, SMART_HEALTH_IT_CLIENT_ID } from '../config';
 
 interface SmartConfiguration {
   authorization_endpoint: string;
@@ -74,7 +74,7 @@ async function initiateEhrLaunch(params: URLSearchParams): Promise<never> {
     scope: FHIR_SCOPE,
     redirect_uri: window.location.origin + '/launch',
     state,
-    aud: "https://api.medplum.com/oauth2/authorize",
+    aud: MEDPLUM_AUTH_URL,
   });
 
   const url = new URL(config.authorization_endpoint);
@@ -171,7 +171,6 @@ export function LaunchPage(): JSX.Element {
 
         const config = await fetchSmartConfiguration(iss);
         const clientId = getClientId(params, iss);
-
         const tokenData = await exchangeCodeForToken(params, config, clientId);
 
         if (!tokenData) {
