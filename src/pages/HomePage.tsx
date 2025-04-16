@@ -14,17 +14,14 @@ interface SmartLaunchProps {
 }
 
 function SmartLaunch({ clientId, iss, children }: SmartLaunchProps): JSX.Element {
+
   const handleClick = (): void => {
     const params = new URLSearchParams({
-      response_type: 'code',
-      client_id: clientId,
-      scope: FHIR_SCOPE,
-      redirect_uri: window.location.origin + '/launch',
-      state: crypto.randomUUID(),
-      aud: iss,
+      iss: "https://api.medplum.com/fhir/R4/",
+      launch: crypto.randomUUID(),
     });
 
-    window.location.href = `${iss}?${params.toString()}`;
+    window.location.href = `http://localhost:8001/launch?${params.toString()}`;
   };
 
   return <div onClick={handleClick}>{children}</div>;

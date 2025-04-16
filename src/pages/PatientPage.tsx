@@ -18,13 +18,16 @@ export function PatientPage(): JSX.Element {
   useEffect(() => {
     const fetchData = async (): Promise<void> => {
       try {
-        const patientId = sessionStorage.getItem('smart_patient');
+        //const patientId = sessionStorage.getItem('smart_patient');
+        const params = new URLSearchParams(window.location.search);
+        const patientId = params.get("patientId");
 
         if (!medplum.getAccessToken() || !patientId) {
           throw new Error('No authentication token or patient ID found');
         }
 
         const patient = await medplum.readResource('Patient', patientId);
+
         setPatient(patient);
 
         // Fetch blood pressure readings

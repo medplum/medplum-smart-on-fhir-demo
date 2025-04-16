@@ -3,7 +3,7 @@ import { MedplumClient } from '@medplum/core';
 import { useMedplumContext } from '@medplum/react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { FHIR_SCOPE, MEDPLUM_CLIENT_ID, SMART_HEALTH_IT_CLIENT_ID } from '../config';
+import { FHIR_SCOPE, MEDPLUM_CLIENT_ID, MEDPLUM_AUTH_URL, SMART_HEALTH_IT_CLIENT_ID } from '../config';
 
 interface SmartConfiguration {
   authorization_endpoint: string;
@@ -61,7 +61,7 @@ async function initiateEhrLaunch(params: URLSearchParams): Promise<never> {
   const config = await fetchSmartConfiguration(iss);
 
   // Generate and store state for verification
-  const state = crypto.randomUUID();
+  const state = launch;
   sessionStorage.setItem('smart_state', state);
 
   // Get the appropriate client ID
@@ -74,8 +74,7 @@ async function initiateEhrLaunch(params: URLSearchParams): Promise<never> {
     scope: FHIR_SCOPE,
     redirect_uri: window.location.origin + '/launch',
     state,
-    aud: iss,
-    launch: launch as string,
+    aud: MEDPLUM_AUTH_URL,
   });
 
   const url = new URL(config.authorization_endpoint);
@@ -121,12 +120,14 @@ async function exchangeCodeForToken(
       grant_type: 'authorization_code',
       code: code as string,
       redirect_uri: window.location.origin + '/launch',
-      client_id: clientId,
+      client_id: "",
     }).toString(),
   });
 
   if (!tokenResponse.ok) {
-    throw new Error('Failed to get access token');
+    console.log(await tokenResponse.text());
+    return null;
+    //throw new Error('Failed to get access token');
   }
 
   return tokenResponse.json();
@@ -172,6 +173,11 @@ export function LaunchPage(): JSX.Element {
         const clientId = getClientId(params, iss);
         const tokenData = await exchangeCodeForToken(params, config, clientId);
 
+        if (!tokenData) {
+          console.log("closing");
+          return;
+        }
+
         // Clean up session storage
         sessionStorage.removeItem('smart_state');
         sessionStorage.removeItem('smart_iss');
@@ -179,7 +185,8 @@ export function LaunchPage(): JSX.Element {
         setupMedplumClient(tokenData, iss, medplumContext);
 
         // Redirect to patient page
-        navigate('/patient')?.catch(console.error);
+        //navigate('/patient')?.catch(console.error);
+        navigate('/patient?patientId=01960d05-428a-711d-9d42-07e3a1bcac89')?.catch(console.error);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Unknown error');
       }
