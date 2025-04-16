@@ -1,21 +1,21 @@
 
-> medplum-smart-on-fhir-demo@4.0.4 build
+> medplum-smart-on-fhir-demo@4.1.0 build
 > tsc && vite build
 
-[36mvite v6.2.2 [32mbuilding for production...[36m[39m
+[36mvite v6.2.6 [32mbuilding for production...[36m[39m
 transforming...
 [32m✓[39m 794 modules transformed.
 rendering chunks...
 computing gzip size...
+[33m
 [2mdist/[22m[2massets/[22m[32mfavicon-CT7MUKFW.svg  [39m[1m[2m  0.24 kB[22m[1m[22m[2m │ gzip:   0.19 kB[22m
 [2mdist/[22m[32mindex.html                   [39m[1m[2m  0.49 kB[22m[1m[22m[2m │ gzip:   0.32 kB[22m
-[2mdist/[22m[2massets/[22m[35mindex-B-RgHTIQ.css    [39m[1m[2m213.89 kB[22m[1m[22m[2m │ gzip:  31.53 kB[22m
-[2mdist/[22m[2massets/[22m[36mindex-BmPz5-gR.js     [39m[1m[2m  1.69 kB[22m[1m[22m[2m │ gzip:   0.80 kB[22m
-[2mdist/[22m[2massets/[22m[36mchart-B-jwOIX3.js     [39m[1m[2m156.69 kB[22m[1m[22m[2m │ gzip:  54.79 kB[22m
-[2mdist/[22m[2massets/[22m[36mindex-D8bGKD0s.js     [39m[1m[33m577.85 kB[39m[22m[2m │ gzip: 173.16 kB[22m
-[33m
+[2mdist/[22m[2massets/[22m[35mindex-m-NiTDsI.css    [39m[1m[2m214.16 kB[22m[1m[22m[2m │ gzip:  31.57 kB[22m
 (!) Some chunks are larger than 500 kB after minification. Consider:
+[2mdist/[22m[2massets/[22m[36mindex-CvotEPtf.js     [39m[1m[2m  1.69 kB[22m[1m[22m[2m │ gzip:   0.80 kB[22m
 - Using dynamic import() to code-split the application
+[2mdist/[22m[2massets/[22m[36mchart-B-jwOIX3.js     [39m[1m[2m156.69 kB[22m[1m[22m[2m │ gzip:  54.79 kB[22m
 - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+[2mdist/[22m[2massets/[22m[36mindex-BMFGXvzW.js     [39m[1m[33m581.66 kB[39m[22m[2m │ gzip: 174.51 kB[22m
 - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
-[32m✓ built in 25.57s[39m
+[32m✓ built in 25.27s[39m
