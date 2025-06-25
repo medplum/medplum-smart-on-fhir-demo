@@ -1,5 +1,5 @@
 
-> medplum-smart-on-fhir-demo@4.1.11 build
+> medplum-smart-on-fhir-demo@4.1.12 build
 > tsc && vite build
 
 [36mvite v6.3.5 [32mbuilding for production...[36m[39m
@@ -8,14 +8,14 @@ transforming...
 rendering chunks...
 computing gzip size...
 [2mdist/[22m[2massets/[22m[32mfavicon-CT7MUKFW.svg  [39m[1m[2m  0.24 kB[22m[1m[22m[2m │ gzip:   0.19 kB[22m
-[33m
 [2mdist/[22m[32mindex.html                   [39m[1m[2m  0.49 kB[22m[1m[22m[2m │ gzip:   0.32 kB[22m
 [2mdist/[22m[2massets/[22m[35mindex-C_SgiIDZ.css    [39m[1m[2m215.98 kB[22m[1m[22m[2m │ gzip:  31.95 kB[22m
-(!) Some chunks are larger than 500 kB after minification. Consider:
-[2mdist/[22m[2massets/[22m[36mindex-BoVp6-IV.js     [39m[1m[2m  1.69 kB[22m[1m[22m[2m │ gzip:   0.80 kB[22m
+[2mdist/[22m[2massets/[22m[36mindex-Jg-yoUt1.js     [39m[1m[2m  1.69 kB[22m[1m[22m[2m │ gzip:   0.80 kB[22m
 [2mdist/[22m[2massets/[22m[36mchart-Dga3Tqhw.js     [39m[1m[2m156.81 kB[22m[1m[22m[2m │ gzip:  54.83 kB[22m
-[2mdist/[22m[2massets/[22m[36mindex-DesXj13h.js     [39m[1m[33m620.46 kB[39m[22m[2m │ gzip: 188.95 kB[22m
+[2mdist/[22m[2massets/[22m[36mindex-bmiyM2tp.js     [39m[1m[33m620.61 kB[39m[22m[2m │ gzip: 188.99 kB[22m
+[32m✓ built in 31.21s[39m
+[33m
+(!) Some chunks are larger than 500 kB after minification. Consider:
 - Using dynamic import() to code-split the application
 - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
 - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
-[32m✓ built in 25.55s[39m
