@@ -1,5 +1,5 @@
 
-> medplum-smart-on-fhir-demo@4.2.3 build
+> medplum-smart-on-fhir-demo@4.2.4 build
 > tsc && vite build
 
 [36mvite v6.3.5 [32mbuilding for production...[36m[39m
@@ -18,4 +18,4 @@ computing gzip size...
 - Using dynamic import() to code-split the application
 - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
 - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
-[32m✓ built in 26.67s[39m
+[32m✓ built in 27.45s[39m
