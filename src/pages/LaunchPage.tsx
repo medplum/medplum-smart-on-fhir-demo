@@ -1,9 +1,11 @@
+// SPDX-FileCopyrightText: Copyright Orangebot, Inc. and Medplum contributors
+// SPDX-License-Identifier: Apache-2.0
 import { Container, Loader, Text } from '@mantine/core';
-import { MedplumClient } from '@medplum/core';
-import { useMedplumContext } from '@medplum/react';
-import { JSX, useEffect, useState } from 'react';
+import { useMedplum } from '@medplum/react';
+import { useEffect, useRef, useState } from 'react';
+import type { JSX } from 'react';
 import { useNavigate } from 'react-router';
-import { FHIR_SCOPE, MEDPLUM_CLIENT_ID, SMART_HEALTH_IT_CLIENT_ID } from '../config';
+import { EHR_SCOPE, MEDPLUM_CLIENT_ID, SMART_HEALTH_IT_CLIENT_ID } from '../config';
 
 interface SmartConfiguration {
   authorization_endpoint: string;
@@ -12,7 +14,7 @@ interface SmartConfiguration {
 
 interface TokenResponse {
   access_token: string;
-  patient: string;
+  patient?: string;
 }
 
 function getClientId(params: URLSearchParams, iss: string): string {
@@ -24,8 +26,7 @@ function getClientId(params: URLSearchParams, iss: string): string {
 
   // Otherwise determine based on issuer domain
   const issuerUrl = new URL(iss);
-  const allowedHosts = ['smarthealthit.org'];
-  if (allowedHosts.includes(issuerUrl.hostname)) {
+  if (issuerUrl.hostname === 'smarthealthit.org' || issuerUrl.hostname.endsWith('.smarthealthit.org')) {
     return SMART_HEALTH_IT_CLIENT_ID;
   }
 
@@ -34,7 +35,8 @@ function getClientId(params: URLSearchParams, iss: string): string {
 }
 
 async function fetchSmartConfiguration(iss: string): Promise<SmartConfiguration> {
-  const response = await fetch(`${iss}/.well-known/smart-configuration`, {
+  const baseUrl = iss.replace(/\/$/, '');
+  const response = await fetch(`${baseUrl}/.well-known/smart-configuration`, {
     headers: {
       Accept: 'application/json',
     },
@@ -55,7 +57,7 @@ async function initiateEhrLaunch(params: URLSearchParams): Promise<never> {
     throw new Error('Missing iss parameter for EHR launch');
   }
 
-  // Store the issuer for later use
+  // Store the issuer (FHIR base URL) for the callback
   sessionStorage.setItem('smart_iss', iss);
 
   const config = await fetchSmartConfiguration(iss);
@@ -71,11 +73,11 @@ async function initiateEhrLaunch(params: URLSearchParams): Promise<never> {
   const authParams = new URLSearchParams({
     response_type: 'code',
     client_id: clientId,
-    scope: FHIR_SCOPE,
+    scope: EHR_SCOPE,
     redirect_uri: window.location.origin + '/launch',
     state,
     aud: iss,
-    launch: launch as string,
+    launch: launch ?? '',
   });
 
   const url = new URL(config.authorization_endpoint);
@@ -85,6 +87,12 @@ async function initiateEhrLaunch(params: URLSearchParams): Promise<never> {
 }
 
 function validateAuthResponse(params: URLSearchParams): void {
+  const error = params.get('error');
+  if (error) {
+    const description = params.get('error_description') ?? error;
+    throw new Error(`Authorization error: ${description}`);
+  }
+
   const code = params.get('code');
   const state = params.get('state');
   const storedState = sessionStorage.getItem('smart_state');
@@ -132,63 +140,67 @@ async function exchangeCodeForToken(
   return tokenResponse.json();
 }
 
-function setupMedplumClient(tokenData: TokenResponse, iss: string, medplumContext: { medplum: MedplumClient }): void {
-  // Store the access token and other relevant data
-  sessionStorage.setItem('smart_patient', tokenData.patient);
-
-  // Configure the Medplum client
-  medplumContext.medplum = new MedplumClient({
-    baseUrl: iss,
-    fhirUrlPath: '',
-    accessToken: tokenData.access_token,
-  });
-}
-
 export function LaunchPage(): JSX.Element {
   const navigate = useNavigate();
+  const medplum = useMedplum();
   const [error, setError] = useState<string>();
-  const medplumContext = useMedplumContext();
+  const hasRun = useRef(false);
 
   useEffect(() => {
+    if (hasRun.current) {
+      return;
+    }
+    hasRun.current = true;
+
     const handleSmartLaunch = async (): Promise<void> => {
       try {
         const params = new URLSearchParams(window.location.search);
-        const launch = params.get('launch');
 
-        if (launch) {
+        if (params.get('launch')) {
           await initiateEhrLaunch(params);
           return;
         }
 
-        // Handle authorization response
+        // Handle authorization callback
         validateAuthResponse(params);
 
-        const iss = sessionStorage.getItem('smart_iss');
+        // EHR launch stores iss as smart_iss; standalone launch stores fhirUrl as smart_fhir_url
+        const iss = sessionStorage.getItem('smart_iss') ?? sessionStorage.getItem('smart_fhir_url');
         if (!iss) {
-          throw new Error('No issuer found in session storage');
+          throw new Error('No FHIR server URL found in session storage');
         }
 
         const config = await fetchSmartConfiguration(iss);
         const clientId = getClientId(params, iss);
         const tokenData = await exchangeCodeForToken(params, config, clientId);
 
-        // Clean up session storage
-        sessionStorage.removeItem('smart_state');
-        sessionStorage.removeItem('smart_iss');
+        // For Medplum flows, configure the SDK client so it can be used downstream.
+        const issHostname = new URL(iss).hostname;
+        if (issHostname === 'medplum.com' || issHostname.endsWith('.medplum.com')) {
+          medplum.setAccessToken(tokenData.access_token);
+        }
 
-        setupMedplumClient(tokenData, iss, medplumContext);
+        // Store auth data for PatientPage
+        sessionStorage.setItem('smart_access_token', tokenData.access_token);
+        sessionStorage.setItem('smart_fhir_base_url', iss);
 
-        // Redirect to patient page
-        navigate('/patient')?.catch(console.error);
+        // Note: smart_state, smart_iss, and smart_fhir_url are intentionally kept in
+        // sessionStorage so that navigating back to the sandbox patient picker and picking
+        // a different patient re-triggers a valid callback (same state, new code).
+
+        if (tokenData.patient) {
+          sessionStorage.setItem('smart_patient', tokenData.patient);
+          Promise.resolve(navigate('/patient')).catch(() => {});
+        } else {
+          Promise.resolve(navigate('/select-patient')).catch(() => {});
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Unknown error');
       }
     };
 
-    handleSmartLaunch().catch((err) => {
-      setError(err instanceof Error ? err.message : 'Unknown error');
-    });
-  }, [navigate, medplumContext]);
+    handleSmartLaunch().catch(console.error);
+  }, [navigate, medplum]);
 
   if (error) {
     return (

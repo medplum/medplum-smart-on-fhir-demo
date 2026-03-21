@@ -1,21 +1,21 @@
 
-> medplum-smart-on-fhir-demo@4.2.4 build
+> medplum-smart-on-fhir-demo@5.1.4 build
 > tsc && vite build
 
-[36mvite v6.3.5 [32mbuilding for production...[36m[39m
-transforming...
-[32m✓[39m 795 modules transformed.
+[36mvite v8.0.1 [32mbuilding client environment for production...[36m[39m
+[2Ktransforming...✓ 6885 modules transformed.
 rendering chunks...
 computing gzip size...
-[2mdist/[22m[2massets/[22m[32mfavicon-CT7MUKFW.svg  [39m[1m[2m  0.24 kB[22m[1m[22m[2m │ gzip:   0.19 kB[22m
-[2mdist/[22m[32mindex.html                   [39m[1m[2m  0.49 kB[22m[1m[22m[2m │ gzip:   0.32 kB[22m
-[2mdist/[22m[2massets/[22m[35mindex-C_SgiIDZ.css    [39m[1m[2m215.98 kB[22m[1m[22m[2m │ gzip:  31.95 kB[22m
-[2mdist/[22m[2massets/[22m[36mindex-CH2sx-7r.js     [39m[1m[2m  1.69 kB[22m[1m[22m[2m │ gzip:   0.80 kB[22m
-[2mdist/[22m[2massets/[22m[36mchart-Dga3Tqhw.js     [39m[1m[2m156.81 kB[22m[1m[22m[2m │ gzip:  54.83 kB[22m
-[2mdist/[22m[2massets/[22m[36mindex-aybk4QNv.js     [39m[1m[33m620.68 kB[39m[22m[2m │ gzip: 189.02 kB[22m
-[33m
+dist/assets/favicon-CT7MUKFW.svg    0.24 kB │ gzip:   0.19 kB
+dist/index.html                     0.48 kB │ gzip:   0.32 kB
+dist/assets/index-CXmgJ1_5.css    226.85 kB │ gzip:  33.54 kB
+dist/assets/dist-BZSF59f5.js        1.59 kB │ gzip:   0.76 kB
+dist/assets/chart-45_rfazW.js     163.03 kB │ gzip:  56.58 kB
+dist/assets/index-Bz0a3kb9.js     843.14 kB │ gzip: 249.86 kB
+
+[32m✓ built in 2.51s[39m
+[33m[plugin builtin:vite-reporter] 
 (!) Some chunks are larger than 500 kB after minification. Consider:
 - Using dynamic import() to code-split the application
-- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
 - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
-[32m✓ built in 27.45s[39m
