@@ -1,5 +1,5 @@
 
-> medplum-smart-on-fhir-demo@5.1.34 build
+> medplum-smart-on-fhir-demo@5.1.35 build
 > tsc && vite build
 
 [33m(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
@@ -21,4 +21,4 @@ dist/assets/index-gKxk0nz4.js     841.25 kB │ gzip: 249.40 kB
 - Using dynamic import() to code-split the application
 - Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
 - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
-[32m✓ built in 6.19s[39m
+[32m✓ built in 3.12s[39m
