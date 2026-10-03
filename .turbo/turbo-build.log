@@ -1,5 +1,5 @@
 
-> medplum-smart-on-fhir-demo@5.2.0 build
+> medplum-smart-on-fhir-demo@5.2.1 build
 > tsc && vite build
 
 [36mvite v8.3.1 [32mbuilding client environment for production...[36m[39m
@@ -10,13 +10,13 @@ computing gzip size...
 dist/assets/favicon-CT7MUKFW.svg    0.24 kB │ gzip:   0.19 kB
 dist/index.html                     0.48 kB │ gzip:   0.31 kB
 dist/assets/index-CP6sHLcg.css    242.19 kB │ gzip:  35.55 kB
-dist/assets/dist-RItnZwTj.js        1.59 kB │ gzip:   0.76 kB
+dist/assets/dist-CFG2F205.js        1.59 kB │ gzip:   0.76 kB
 dist/assets/chart-Dz1YDNVD.js     163.00 kB │ gzip:  56.59 kB
-dist/assets/index-D5Kz7u9z.js     870.84 kB │ gzip: 258.17 kB
+dist/assets/index-Caz8CzaG.js     870.93 kB │ gzip: 258.22 kB
 
 [33m[plugin builtin:vite-reporter] 
 (!) Some chunks are larger than 500 kB after minification. Consider:
 - Using dynamic import() to code-split the application
 - Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
 - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
-[32m✓ built in 4.11s[39m
+[32m✓ built in 6.42s[39m
